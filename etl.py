@@ -214,7 +214,7 @@ def create_song_plays_table(spark, input_song_data, input_log_data):
     temp_table  = temp_table_with_month.withColumn("year", extract_fields_from_ts("ts")["year"])
     
     # create final table
-    songplays_table = partitioned_temp_table.selectExpr(["songplay_id",     \
+    songplays_table = temp_table.selectExpr(["songplay_id",                 \
                                              "ts as start_time",            \
                                              "userId as user_id",           \
                                              "level",                       \
