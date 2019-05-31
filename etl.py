@@ -47,7 +47,7 @@ def create_songs_table(spark, input_data):
     song_data = input_data
     
     # read song data file
-    df = spark.read.json(song_data)
+    df = spark.read.json(song_data).dropDuplicates()
 
     # extract columns to create songs table
     songs_table = df.select("song_id", "title", "artist_id", "year", "duration")
@@ -75,7 +75,7 @@ def create_artists_table(spark, input_data):
     song_data = input_data
     
     # read song data file
-    df = spark.read.json(song_data)
+    df = spark.read.json(song_data).dropDuplicates()
     
     # extract columns to create artists table
     artists_table = df.selectExpr(["artist_id",                    \
@@ -104,7 +104,7 @@ def create_users_table(spark, input_data):
     log_data = input_data
 
     # read log data file
-    df = spark.read.json(log_data)
+    df = spark.read.json(log_data).dropDuplicates()
     
     # extract columns to create users table
     users_table_df = df.selectExpr([ "userId as user_id",       \
@@ -161,7 +161,7 @@ def create_time_table(spark, input_data):
     log_data = input_data
 
     # read log data file
-    df = spark.read.json(log_data)
+    df = spark.read.json(log_data).dropDuplicates()
     
     # call UDF on the timestamp
     time_table_df = df.withColumn("time_data", extract_fields_from_ts("ts"))
@@ -192,10 +192,10 @@ def create_song_plays_table(spark, input_song_data, input_log_data):
     """
     
     # read log data file
-    log_df = spark.read.json(input_log_data)
+    log_df = spark.read.json(input_log_data).dropDuplicates()
     
     # read song data file
-    song_df = spark.read.json(input_song_data)
+    song_df = spark.read.json(input_song_data).dropDuplicates()
     
     # join both the dataframes by song title and artist
     combined_df = log_df.join(                                            \
