@@ -53,7 +53,10 @@ def create_songs_table(spark, input_data):
     songs_table = df.select("song_id", "title", "artist_id", "year", "duration")
     
     # write songs table to parquet files partitioned by year and artist
-    songs_table.write.partitionBy("year", "artist_id").format("parquet").save("s3a://udacity-project-4-dim-tables/songs.parquet")
+    songs_table.write
+        .partitionBy("year", "artist_id")                                   \
+        .format("parquet")                                                  \
+        .save("s3a://udacity-project-4-dim-tables/songs.parquet")           
     
     
 def create_artists_table(spark, input_data):
@@ -170,7 +173,9 @@ def create_time_table(spark, input_data):
     time_table = time_table_df.selectExpr(*exprs)
     
     # store the table
-    time_table.write.format("parquet").partitionBy("year", "month").save("s3a://udacity-project-4-dim-tables/time.parquet")
+    time_table.write.format("parquet")                                          \
+                    .partitionBy("year", "month")                               \
+                    .save("s3a://udacity-project-4-dim-tables/time.parquet")    
     
 
 def create_song_plays_table(spark, input_song_data, input_log_data):
@@ -215,7 +220,9 @@ def create_song_plays_table(spark, input_song_data, input_log_data):
                                              "userAgent as user_agent"])
     
     # store the table
-    songplays_table.write.format("parquet").save("s3a://udacity-project-4-dim-tables/songplays.parquet")
+    songplays_table.write
+        .format("parquet")                                                  \
+        .save("s3a://udacity-project-4-dim-tables/songplays.parquet")       \
     
     
 def process_song_data(spark, input_data):
