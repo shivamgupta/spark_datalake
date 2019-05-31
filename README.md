@@ -59,10 +59,8 @@ __`time`__ is one of the dimension table with the following columns:
 # Description of files
 
 __1. `data` directory__
-Contains sample data for quicker processing 
-
+Contains sample data for quicker processing.
 __2. `dl.cfg` __
-Contains AWS IAM User credentials 
-
+Contains AWS IAM User credentials.
 __3. `etl.py` __
 ETL Pipeline that reads data from S3 and loads dimension tables back to S3 in parquet format.
