@@ -205,11 +205,16 @@ def create_song_plays_table(spark, input_song_data, input_log_data):
                              )                                            \
                         .filter(log_df.page=="NextSong")
     
-    # create a logic for songplay_id
-    temp_table = combined_df.withColumn("songplay_id", monotonically_increasing_id())
+    # create a logic for songplay_id and get month & year for partitioning 
+    temp_table_with_id = combined_df.withColumn("songplay_id", monotonically_increasing_id())
+    
+    temp_table_with_month = temp_table_with_id \
+                                    .withColumn("month", extract_fields_from_ts("ts")["month"])
+    
+    temp_table  = temp_table_with_month.withColumn("year", extract_fields_from_ts("ts")["year"])
     
     # create final table
-    songplays_table = temp_table.selectExpr(["songplay_id",                 \
+    songplays_table = partitioned_temp_table.selectExpr(["songplay_id",     \
                                              "ts as start_time",            \
                                              "userId as user_id",           \
                                              "level",                       \
@@ -217,12 +222,15 @@ def create_song_plays_table(spark, input_song_data, input_log_data):
                                              "artist_id",                   \
                                              "sessionId as session_id",     \
                                              "artist_location as location", \
-                                             "userAgent as user_agent"])
+                                             "userAgent as user_agent",     \
+                                             "month",                       \
+                                             "year"])
     
     # store the table
     songplays_table.write                                                   \
         .format("parquet")                                                  \
-        .save("s3a://udacity-project-4-dim-tables/songplays.parquet")       \
+        .partitionBy("year", "month")                                       \
+        .save("s3a://udacity-project-4-dim-tables/songplays.parquet")
     
     
 def process_song_data(spark, input_data):
